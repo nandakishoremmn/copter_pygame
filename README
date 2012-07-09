@@ -1,0 +1,9 @@
+*****************************************
+|	*COPTER*							|
+|		Author   : Nandu				|
+*****************************************
+Controls:
+P         - Pause
+SPACE     - Resume
+SPACE, UP - Move up
+ESC       - QUIT
