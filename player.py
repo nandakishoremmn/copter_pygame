@@ -5,7 +5,7 @@ Created on 07-Jul-2012
 '''
 
 from initialise import screen, WIDTH, HEIGHT
-from pygame import image, display, key, draw
+from pygame import image, display, key, draw, mixer
 from pygame.constants import K_SPACE, K_UP
 from gameobjects.vector2 import Vector2
 from random import randint
@@ -23,10 +23,13 @@ class PLAYER():
         self.pic_dead = image.load('images/explode.png').convert_alpha()
         self.pic = self.pic_down
         self.tail_pic = image.load('images/tail.png').convert_alpha()
+        self.sound =  mixer.Sound('sounds/copter.wav');
+        self.explode = mixer.Sound('sounds/end.wav')
         self.size = Vector2(self.pic.get_width(),self.pic.get_height())
         self.position = Vector2(.1*WIDTH,.5*HEIGHT)
         self.velocity = Vector2()
         self.tail = [.5*HEIGHT]*40
+        mixer.Sound('sounds/start.wav').play()
         
      
     def move(self):
@@ -34,10 +37,12 @@ class PLAYER():
         for k in [K_SPACE,K_UP]:
             if keys[k]:
                 self.pic = self.pic_up
+                self.sound.play()
                 self.velocity.y = min(0,self.velocity.y-.1)
                 self.position.y += self.velocity.y
                 break
         else:
+            self.sound.stop()
             self.pic = self.pic_down
             self.velocity.y = max(-3,self.velocity.y+.1)
             self.position.y += self.velocity.y

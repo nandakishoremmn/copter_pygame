@@ -3,7 +3,7 @@ Created on 07-Jul-2012
 
 @author: NANDU
 '''
-from pygame import display, init, time, event, font, image
+from pygame import display, init, time, event, font, image, mixer
 from pygame.constants import *
 from player import PLAYER
 from bricks import BRICK
@@ -33,6 +33,7 @@ class Game:
         self.player = PLAYER()
         self.tick = 100
         self.bg_x = 0
+        self.bg_sfx = mixer.Sound('sounds/bg.wav')
 
     def handle_events(self):
         for evt in event.get():
@@ -90,12 +91,16 @@ class Game:
                 del self.bricks[index]
             if ( brick.position-self.player.position ).length < ( brick.size.length/3 + self.player.size.length/3 ):
                 self.player.pic = self.player.pic_dead
+                self.player.sound.stop()
+                self.player.explode.play()
                 self.stop = True
             if ( brick.position-self.player.position ).length < ( brick.size.length/2 + self.player.size.length/2 ):
                 self.tick,self.inc = 25, 4
                 
         if not( self.player.size.y/2 < self.player.position.y < HEIGHT-self.player.size.y/2 ):
             self.player.pic = self.player.pic_dead
+            self.player.sound.stop()
+            self.player.explode.play()
             self.stop = True 
     
     def reset(self):
@@ -111,6 +116,8 @@ class Game:
         f.close()   
         
     def run(self):
+        self.bg_sfx.play(-1)
+        self.bg_sfx.set_volume(01)
         while not self.quit:
             self.handle_events()
             if not (self.pause or self.stop):
@@ -119,6 +126,7 @@ class Game:
             self.draw()
             self.clock.tick(self.tick)
         else:
+            self.bg_sfx.stop()
             self.write_scores()
             
             
