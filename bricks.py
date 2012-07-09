@@ -20,7 +20,7 @@ class BRICK():
         '''
         Constructor
         '''
-        self.pic = image.load('images/Asteroid.png')
+        self.pic = image.load('images/Asteroid.png').convert_alpha()
         self.size = Vector2(self.pic.get_width(), self.pic.get_height())
         self.radius = randint(15,20)
         self.position = Vector2( WIDTH+self.radius, randint(0,HEIGHT-self.radius) )

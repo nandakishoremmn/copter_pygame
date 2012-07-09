@@ -3,7 +3,7 @@ Created on 07-Jul-2012
 
 @author: NANDU
 '''
-from pygame import display, init, time, event, font
+from pygame import display, init, time, event, font, image
 from pygame.constants import *
 from player import PLAYER
 from bricks import BRICK
@@ -17,8 +17,10 @@ class Game:
         init()
         self.clock = time.Clock()
         self.n = 0
+        self.pic = image.load('images/back.png').convert()
         self.quit, self.pause, self.stop = False, False, False
         self.score = 0
+        self.inc = 1
         try:
             f=open('high.dat','r')
             self.high=load(f)
@@ -29,6 +31,8 @@ class Game:
         self.Font = font.SysFont("arial", 40);
         self.bricks = dict()
         self.player = PLAYER()
+        self.tick = 100
+        self.bg_x = 0
 
     def handle_events(self):
         for evt in event.get():
@@ -56,6 +60,12 @@ class Game:
         
     def draw(self):
         screen.fill((0,0,0))
+        for y in range(0, HEIGHT, self.pic.get_height()):
+            for x in range(int(self.bg_x), WIDTH+self.pic.get_width(), self.pic.get_width()):
+                screen.blit(self.pic, (x, y))
+        if not ( self.pause or self.stop ):
+            self.bg_x = self.bg_x-1 if self.bg_x > -self.pic.get_width() else 0
+        #screen.blit(self.pic,(0,0))
         self.player.draw()
         for brick in self.bricks.values():
             brick.draw()
@@ -63,7 +73,7 @@ class Game:
         display.flip()
 
     def update(self):
-        self.score += 1
+        self.score += self.inc
         if self.score > self.high:
             self.high = self.score
         if randint(1,20)==1:
@@ -74,13 +84,18 @@ class Game:
         self.player.move()
 
     def check_bounds(self):
+        self.tick, self.inc = 100, 1
         for index, brick in self.bricks.items():
             if brick.position.x + brick.radius < 0:
                 del self.bricks[index]
             if ( brick.position-self.player.position ).length < ( brick.size.length/3 + self.player.size.length/3 ):
+                self.player.pic = self.player.pic_dead
                 self.stop = True
+            if ( brick.position-self.player.position ).length < ( brick.size.length/2 + self.player.size.length/2 ):
+                self.tick,self.inc = 25, 4
                 
         if not( self.player.size.y/2 < self.player.position.y < HEIGHT-self.player.size.y/2 ):
+            self.player.pic = self.player.pic_dead
             self.stop = True 
     
     def reset(self):
@@ -102,7 +117,7 @@ class Game:
                 self.update()
                 self.check_bounds()
             self.draw()
-            self.clock.tick(100)
+            self.clock.tick(self.tick)
         else:
             self.write_scores()
             

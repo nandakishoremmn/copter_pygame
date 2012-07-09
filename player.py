@@ -18,8 +18,11 @@ class PLAYER():
         '''
         Constructor
         '''
-        self.pic = image.load('images/planet.png')
-        self.tail_pic = image.load('images/tail.png')
+        self.pic_down = image.load('images/heli_down.png').convert_alpha()
+        self.pic_up = image.load('images/heli_up.png').convert_alpha()
+        self.pic_dead = image.load('images/explode.png').convert_alpha()
+        self.pic = self.pic_down
+        self.tail_pic = image.load('images/tail.png').convert_alpha()
         self.size = Vector2(self.pic.get_width(),self.pic.get_height())
         self.position = Vector2(.1*WIDTH,.5*HEIGHT)
         self.velocity = Vector2()
@@ -30,10 +33,12 @@ class PLAYER():
         keys = key.get_pressed()
         for k in [K_SPACE,K_UP]:
             if keys[k]:
+                self.pic = self.pic_up
                 self.velocity.y = min(0,self.velocity.y-.1)
                 self.position.y += self.velocity.y
                 break
         else:
+            self.pic = self.pic_down
             self.velocity.y = max(-3,self.velocity.y+.1)
             self.position.y += self.velocity.y
         if randint(1,1)==1:
@@ -43,7 +48,7 @@ class PLAYER():
     def draw(self):
         screen.blit(self.pic, (self.position-self.size/2) )
         for i, t in enumerate(self.tail[::4]):
-            screen.blit(self.tail_pic, map(int, ((i-3)*.01*WIDTH,t-10)) )
+            screen.blit(self.tail_pic, map(int, ((i-3)*.01*WIDTH,t-self.pic.get_width()/2)) )
             #draw.circle( screen, (255,255,0,0),map(int, ((i-1)*.01*WIDTH,t)),int(15-i*.4) )
         #x, y = self.position - self.size/2
         #w, h = self.size
