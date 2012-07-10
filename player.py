@@ -18,6 +18,12 @@ class PLAYER():
         '''
         Constructor
         '''
+        try:
+            f = open('name.txt')
+            self.name = f.readline()
+            f.close()
+        except:
+            self.name = 'New Player'
         self.pic_down = image.load('images/heli_down.png').convert_alpha()
         self.pic_up = image.load('images/heli_up.png').convert_alpha()
         self.pic_dead = image.load('images/explode.png').convert_alpha()
