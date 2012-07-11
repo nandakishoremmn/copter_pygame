@@ -44,11 +44,11 @@ class Game:
                 self.quit = True
             if evt.type == KEYDOWN:
                 if evt.key == K_u and self.stop:
-                    r=''
                     try:
-                        r=str(post_score(self.player.name,self.score))
+                        if not self.rank:
+                            r=str(post_score(self.player.name,self.score))
+                            self.msg_center = 'Your Global Rank :'+r
                         self.rank = True
-                        self.msg_center = 'Your Rank :'+r
                     except:
                         self.rank = False
                         self.msg_center = 'Sorry! Failed to fetch rank'
@@ -143,6 +143,7 @@ class Game:
         self.player = PLAYER() 
         self.n = 0
         self.score = 0
+        self.rank = False
         self.msg_center = ""
     
     def write_scores(self):
